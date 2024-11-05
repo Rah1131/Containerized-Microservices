@@ -16,7 +16,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       echo "Logging in to Azure Container Registry"
-      az acr login --name $(ACR_NAME)
+      az acr login --name ServiceConnectionD
 
 - task: Docker@2
   inputs:
