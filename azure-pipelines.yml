@@ -11,24 +11,17 @@ variables:
 steps:
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'ServiceConnection'  # Azure service connection name
+    azureSubscription: 'ServiceConnection'  # The Azure DevOps service connection name
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      echo "Logging in to Azure Container Registry"
+      echo "Logging in to Azure Container Registry using az acr login"
       az acr login --name $(ACR_NAME)
-
-- script: |
-    echo "Logging in to Docker"
-    echo $(DOCKER_PASSWORD) | docker login project3acr.azurecr.io -u $(DOCKER_USERNAME) --password-stdin
-  displayName: 'Docker Login'
-  env:
-    DOCKER_USERNAME: $(dockerUsername)  # Use service connection username or Azure DevOps pipeline variable
-    DOCKER_PASSWORD: $(dockerPassword)  # Use service connection password or Azure DevOps pipeline variable
+  displayName: 'Azure CLI ACR Login'
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'  # Docker service connection name
+    containerRegistry: 'ServiceConnectionD'  # Docker service connection for build and push
     repository: 'financial-app/account-service'
     command: 'buildAndPush'
     Dockerfile: 'account-service/Dockerfile'
@@ -58,13 +51,13 @@ steps:
     Dockerfile: 'user-service/Dockerfile'
     tags: $(IMAGE_TAG)
 
-# Additional debugging step to check ACR login and access
+# Optional step to verify ACR access
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'ServiceConnection'  # The Azure service connection name
+    azureSubscription: 'ServiceConnection'  # The Azure DevOps service connection name
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az acr login --name $(ACR_NAME)
+      echo "Verifying ACR access by pulling a Docker image"
       docker pull project3acr.azurecr.io/financial-app/account-service:$(IMAGE_TAG)
   displayName: 'Verify ACR Access'
