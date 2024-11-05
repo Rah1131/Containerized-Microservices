@@ -11,7 +11,7 @@ variables:
 steps:
 - task: AzureCLI@2
   inputs:
-    azureSubscription: '<your-service-connection-name>'
+    azureSubscription: 'ServiceConnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
