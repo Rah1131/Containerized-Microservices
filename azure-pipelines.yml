@@ -1,0 +1,51 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ACR_NAME: 'project3acr'  # Replace with your ACR name without .azurecr.io
+  IMAGE_TAG: 'latest'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: '<your-service-connection-name>'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Logging in to Azure Container Registry"
+      az acr login --name $(ACR_NAME)
+
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(ACR_NAME)'
+    repository: 'financial-app/account-service'  # Change as needed for each service
+    command: 'buildAndPush'
+    Dockerfile: 'account-service/Dockerfile'
+    tags: $(IMAGE_TAG)
+
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(ACR_NAME)'
+    repository: 'financial-app/notification-service'
+    command: 'buildAndPush'
+    Dockerfile: 'notification-service/Dockerfile'
+    tags: $(IMAGE_TAG)
+
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(ACR_NAME)'
+    repository: 'financial-app/transaction-service'
+    command: 'buildAndPush'
+    Dockerfile: 'transaction-service/Dockerfile'
+    tags: $(IMAGE_TAG)
+
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(ACR_NAME)'
+    repository: 'financial-app/user-service'
+    command: 'buildAndPush'
+    Dockerfile: 'user-service/Dockerfile'
+    tags: $(IMAGE_TAG)
