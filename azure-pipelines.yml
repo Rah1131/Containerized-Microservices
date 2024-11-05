@@ -23,8 +23,8 @@ steps:
     echo $(DOCKER_PASSWORD) | docker login project3acr.azurecr.io -u $(DOCKER_USERNAME) --password-stdin
   displayName: 'Docker Login'
   env:
-    DOCKER_USERNAME: ServiceConnectionD  # Use service connection username or Azure DevOps pipeline variable
-    DOCKER_PASSWORD: ServiceConnectionD  # Use service connection password or Azure DevOps pipeline variable
+    DOCKER_USERNAME: $(dockerUsername)  # Use service connection username or Azure DevOps pipeline variable
+    DOCKER_PASSWORD: $(dockerPassword)  # Use service connection password or Azure DevOps pipeline variable
 
 - task: Docker@2
   inputs:
