@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'self-hosted'
 
 variables:
   ACR_NAME: 'project3acr'  # Replace with your ACR name without .azurecr.io
@@ -16,7 +16,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       echo "Logging in to Azure Container Registry"
-      az acr login --name ServiceConnectionD
+      az acr login --name ServiceConnection
 
 - task: Docker@2
   inputs:
