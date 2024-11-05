@@ -1,17 +1,17 @@
 trigger:
-- main
+- main  # Triggers the pipeline on changes to the main branch
 
 pool:
-  name: 'Self-hosted'  # Using the self-hosted agent pool
+  vmImage: 'ubuntu-latest'  # Using the ubuntu-latest hosted agent
 
 variables:
   ACR_NAME: 'project3acr'  # Your ACR name without .azurecr.io
-  IMAGE_TAG: 'latest'  # Default image tag set to 'latest'
+  IMAGE_TAG: 'latest'  # Tag for your Docker images
 
 steps:
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'ServiceConnection'  # The correct service connection for Azure CLI
+    azureSubscription: 'ServiceConnection'  # Azure service connection name
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
@@ -20,7 +20,7 @@ steps:
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'  # Docker service connection
+    containerRegistry: 'ServiceConnectionD'  # Docker service connection name
     repository: 'financial-app/account-service'
     command: 'buildAndPush'
     Dockerfile: 'account-service/Dockerfile'
@@ -28,7 +28,7 @@ steps:
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'  # Docker service connection
+    containerRegistry: 'ServiceConnectionD'
     repository: 'financial-app/notification-service'
     command: 'buildAndPush'
     Dockerfile: 'notification-service/Dockerfile'
@@ -36,7 +36,7 @@ steps:
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'  # Docker service connection
+    containerRegistry: 'ServiceConnectionD'
     repository: 'financial-app/transaction-service'
     command: 'buildAndPush'
     Dockerfile: 'transaction-service/Dockerfile'
@@ -44,7 +44,7 @@ steps:
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'  # Docker service connection
+    containerRegistry: 'ServiceConnectionD'
     repository: 'financial-app/user-service'
     command: 'buildAndPush'
     Dockerfile: 'user-service/Dockerfile'
