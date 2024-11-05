@@ -2,50 +2,50 @@ trigger:
 - main
 
 pool:
-  vmImage: 'self-hosted'
+  name: 'Self-hosted'  # Using the self-hosted agent pool
 
 variables:
-  ACR_NAME: 'project3acr'  # Replace with your ACR name without .azurecr.io
-  IMAGE_TAG: 'latest'
+  ACR_NAME: 'project3acr'  # Your ACR name without .azurecr.io
+  IMAGE_TAG: 'latest'  # Default image tag set to 'latest'
 
 steps:
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'ServiceConnection'
+    azureSubscription: 'ServiceConnection'  # The correct service connection for Azure CLI
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
       echo "Logging in to Azure Container Registry"
-      az acr login --name ServiceConnection
+      az acr login --name $(ACR_NAME)
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'
-    repository: 'financial-app/account-service'  # Change as needed for each service
+    containerRegistry: 'ServiceConnectionD'  # Docker service connection
+    repository: 'financial-app/account-service'
     command: 'buildAndPush'
-    Dockerfile: 'financial-app/account-service/Dockerfile'
+    Dockerfile: 'account-service/Dockerfile'
     tags: $(IMAGE_TAG)
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'
+    containerRegistry: 'ServiceConnectionD'  # Docker service connection
     repository: 'financial-app/notification-service'
     command: 'buildAndPush'
-    Dockerfile: 'financial-app/notification-service/Dockerfile'
+    Dockerfile: 'notification-service/Dockerfile'
     tags: $(IMAGE_TAG)
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'
+    containerRegistry: 'ServiceConnectionD'  # Docker service connection
     repository: 'financial-app/transaction-service'
     command: 'buildAndPush'
-    Dockerfile: 'financial-app/transaction-service/Dockerfile'
+    Dockerfile: 'transaction-service/Dockerfile'
     tags: $(IMAGE_TAG)
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'ServiceConnectionD'
+    containerRegistry: 'ServiceConnectionD'  # Docker service connection
     repository: 'financial-app/user-service'
     command: 'buildAndPush'
-    Dockerfile: 'financial-app/user-service/Dockerfile'
+    Dockerfile: 'user-service/Dockerfile'
     tags: $(IMAGE_TAG)
