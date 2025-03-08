@@ -19,8 +19,6 @@ steps:
       az acr login --name $(ACR_NAME)
   displayName: 'Azure CLI ACR Login'
 
-
-# Optional step to verify ACR access
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'ServiceConnection'  # The Azure DevOps service connection name
@@ -29,6 +27,8 @@ steps:
     inlineScript: |
       echo "Verifying ACR access by pulling a Docker image"
       docker pull project3acr.azurecr.io/financial-app/account-service:$(IMAGE_TAG)
+
+      
   displayName: 'Verify ACR Access'
 - task: Docker@2
   inputs:
@@ -61,4 +61,3 @@ steps:
     command: 'buildAndPush'
     Dockerfile: 'user-service/Dockerfile'
     tags: $(IMAGE_TAG)
-
